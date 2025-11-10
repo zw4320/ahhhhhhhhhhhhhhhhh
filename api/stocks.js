@@ -2,10 +2,10 @@
  * Vercel Serverless Function - Stock Price API
  *
  * Fetches real-time stock prices for major technology competitors
- * from API Ninjas Stock Price endpoint.
+ * from Finnhub Stock API (free tier available).
  *
  * Environment Variables Required:
- * - API_KEY: API Ninjas authentication key
+ * - API_KEY: Finnhub API token (get free at https://finnhub.io/)
  */
 
 // Company ticker to full name mapping
@@ -18,30 +18,37 @@ const COMPANIES = {
 };
 
 /**
- * Fetches stock price data for a specific ticker
+ * Fetches stock price data for a specific ticker using Finnhub API
  * @param {string} ticker - Stock ticker symbol
- * @param {string} apiKey - API Ninjas API key
+ * @param {string} apiKey - Finnhub API token
  * @returns {Promise<Object>} Stock data object
  */
 async function fetchStockPrice(ticker, apiKey) {
-  const url = `https://api.api-ninjas.com/v1/stockprice?ticker=${ticker}`;
+  // Finnhub API endpoint for real-time quote
+  const url = `https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${apiKey}`;
 
-  const response = await fetch(url, {
-    headers: {
-      'X-Api-Key': apiKey
-    }
-  });
+  const response = await fetch(url);
 
   if (!response.ok) {
-    throw new Error(`API request failed for ${ticker}: ${response.status}`);
+    const errorText = await response.text().catch(() => 'Unknown error');
+    throw new Error(`API request failed for ${ticker}: ${response.status} - ${errorText}`);
   }
 
   const data = await response.json();
 
+  // Finnhub returns: { c: currentPrice, h: high, l: low, o: open, pc: previousClose, t: timestamp }
+  // Check if we got valid data
+  if (data.c === 0 && data.t === 0) {
+    throw new Error(`No data available for ${ticker} (market may be closed or invalid ticker)`);
+  }
+
   return {
     ticker: ticker,
     companyName: COMPANIES[ticker],
-    price: data.price,
+    price: data.c, // 'c' is the current price
+    previousClose: data.pc, // Previous close price
+    change: data.c - data.pc, // Price change
+    changePercent: ((data.c - data.pc) / data.pc) * 100, // Percentage change
     timestamp: new Date().toISOString()
   };
 }
