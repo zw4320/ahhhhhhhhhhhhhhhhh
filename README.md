@@ -26,7 +26,7 @@ A professional business intelligence dashboard for tracking real-time stock perf
 
 ### Prerequisites
 - [Vercel Account](https://vercel.com/signup) (free tier works)
-- [API Ninjas Account](https://api-ninjas.com/) for stock data API access
+- [Finnhub Account](https://finnhub.io/register) for stock data API access (free tier: 60 calls/min)
 
 ### Deployment Steps
 
@@ -36,10 +36,10 @@ A professional business intelligence dashboard for tracking real-time stock perf
    cd competitive-intelligence-dashboard
    ```
 
-2. **Get Your API Key**
-   - Sign up at [API Ninjas](https://api-ninjas.com/)
-   - Navigate to your account dashboard
-   - Copy your API key
+2. **Get Your API Token**
+   - Sign up at [Finnhub](https://finnhub.io/register)
+   - After registration, you'll immediately see your API token on the dashboard
+   - Copy your API token (it looks like: `abcd1234efgh5678...`)
 
 3. **Deploy to Vercel**
 
@@ -109,7 +109,8 @@ The API endpoint is configured to:
 - **Timeout**: 10 seconds maximum
 - **Memory**: 1024 MB
 - **CORS**: Enabled for frontend access
-- **Rate Limiting**: Managed by API Ninjas (free tier: 10,000 requests/month)
+- **Rate Limiting**: Managed by Finnhub (free tier: 60 calls/minute)
+- **Data Updates**: Real-time during market hours, last close price when market is closed
 
 ## 💻 Local Development
 
@@ -185,9 +186,12 @@ Perfect for:
 - Redeploy after adding environment variables
 
 ### "Unable to load data"
-- Check API Ninjas rate limits (free tier: 10k requests/month)
-- Verify your API key is valid
+- Check Finnhub rate limits (free tier: 60 calls/minute)
+- Verify your API token is valid (check Finnhub dashboard)
+- Ensure you're not hitting rate limits
+- Note: Stock prices are only available during market hours (for real-time data)
 - Check browser console for specific errors
+- Verify the API_KEY environment variable is set correctly in Vercel
 
 ### Data not updating
 - Click "Refresh Data" button
@@ -216,13 +220,13 @@ This project is open source and available under the MIT License.
 
 ## 🙏 Acknowledgments
 
-- Stock data provided by [API Ninjas](https://api-ninjas.com/)
+- Stock data provided by [Finnhub](https://finnhub.io/)
 - Deployed on [Vercel](https://vercel.com)
 - Built with vanilla JavaScript (no frameworks required!)
 
 ---
 
-**Need Help?** Check the Vercel documentation or API Ninjas support for assistance.
+**Need Help?** Check the Vercel documentation or Finnhub support for assistance.
 
 **Ready to deploy?** Click the button below:
 
