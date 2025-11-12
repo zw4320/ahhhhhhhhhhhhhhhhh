@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Real-time competitive intelligence dashboard tracking stock performance of major technology companies">
+    <meta name="description" content="Real-time competitive intelligence dashboard tracking stock performance and economic indicators">
     <meta property="og:title" content="Competitive Intelligence Dashboard">
-    <meta property="og:description" content="Technology Sector Stock Analysis">
+    <meta property="og:description" content="Multi-Sector Stock Analysis & Economic Indicators">
     <meta property="og:type" content="website">
-    <title>Competitive Intelligence Dashboard | Technology Sector Analysis</title>
+    <title>Competitive Intelligence Dashboard | Multi-Sector Analysis</title>
 
     <style>
         /* ============================================
@@ -29,6 +29,8 @@
             --border-color: #2d3557;
             --success-color: #00c853;
             --error-color: #ff1744;
+            --warning-color: #ffa726;
+            --info-color: #29b6f6;
             --highlight-bg: #2a3f5f;
             --button-bg: #2962ff;
             --button-hover: #1e4fd9;
@@ -67,7 +69,7 @@
            Layout Container
            ============================================ */
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             animation: fadeIn 0.6s ease-in;
         }
@@ -164,14 +166,54 @@
         }
 
         /* ============================================
-           Dashboard Card
+           Dashboard Cards
            ============================================ */
+        .dashboard-grid {
+            display: grid;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+
         .dashboard-card {
             background: var(--secondary-bg);
             border-radius: var(--radius-lg);
             box-shadow: var(--shadow-lg);
             padding: var(--spacing-lg);
             border: 1px solid var(--border-color);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-md);
+            padding-bottom: var(--spacing-sm);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .card-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-stocks {
+            background: rgba(41, 98, 255, 0.2);
+            color: #6c9eff;
+        }
+
+        .badge-economic {
+            background: rgba(255, 167, 38, 0.2);
+            color: #ffb84d;
         }
 
         /* ============================================
@@ -265,7 +307,7 @@
             color: var(--text-primary);
         }
 
-        /* Ticker symbol styling */
+        /* Ticker/Symbol styling */
         .ticker {
             font-family: 'Courier New', monospace;
             font-weight: 500;
@@ -276,11 +318,45 @@
             display: inline-block;
         }
 
+        /* Sector/Type badge */
+        .sector-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .sector-technology { background: rgba(41, 98, 255, 0.2); color: #6c9eff; }
+        .sector-healthcare { background: rgba(0, 200, 83, 0.2); color: #4caf50; }
+        .sector-finance { background: rgba(255, 193, 7, 0.2); color: #ffb300; }
+        .sector-energy { background: rgba(255, 87, 34, 0.2); color: #ff6f43; }
+        .sector-consumer { background: rgba(156, 39, 176, 0.2); color: #ba68c8; }
+        .sector-industrial { background: rgba(96, 125, 139, 0.2); color: #90a4ae; }
+        .sector-index { background: rgba(33, 150, 243, 0.2); color: #42a5f5; }
+        .sector-volatility { background: rgba(255, 23, 68, 0.2); color: #ff1744; }
+        .sector-bonds { background: rgba(76, 175, 80, 0.2); color: #66bb6a; }
+        .sector-commodities { background: rgba(255, 152, 0, 0.2); color: #ffa726; }
+
         /* Price styling */
         .price {
             font-weight: 600;
             font-size: 1.125rem;
             font-variant-numeric: tabular-nums;
+        }
+
+        /* Change styling */
+        .change {
+            font-weight: 600;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .change-positive {
+            color: var(--success-color);
+        }
+
+        .change-negative {
+            color: var(--error-color);
         }
 
         /* Highlight colors */
@@ -292,32 +368,6 @@
         .lowest {
             color: var(--error-color);
             font-weight: 700;
-        }
-
-        /* Change indicator */
-        .change-indicator {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            font-weight: bold;
-        }
-
-        .indicator-high {
-            background: rgba(0, 200, 83, 0.2);
-            color: var(--success-color);
-        }
-
-        .indicator-low {
-            background: rgba(255, 23, 68, 0.2);
-            color: var(--error-color);
-        }
-
-        .indicator-neutral {
-            background: var(--accent-bg);
-            color: var(--text-secondary);
         }
 
         /* ============================================
@@ -349,6 +399,12 @@
                 padding: var(--spacing-sm);
             }
 
+            .card-header {
+                flex-direction: column;
+                gap: var(--spacing-xs);
+                align-items: flex-start;
+            }
+
             th, td {
                 padding: var(--spacing-sm);
                 font-size: 0.875rem;
@@ -363,7 +419,6 @@
                 font-size: 0.875rem;
             }
 
-            /* Stack table cells on very small screens */
             @media (max-width: 480px) {
                 .table-container {
                     overflow-x: auto;
@@ -392,7 +447,6 @@
             }
         }
 
-        /* Focus visible for keyboard navigation */
         *:focus-visible {
             outline: 3px solid var(--button-bg);
             outline-offset: 2px;
@@ -404,23 +458,41 @@
         <!-- Header Section -->
         <header>
             <h1>Competitive Intelligence Dashboard</h1>
-            <p class="subtitle">Technology Sector Stock Analysis</p>
+            <p class="subtitle">Multi-Sector Stock Analysis & Economic Indicators</p>
         </header>
 
         <!-- Control Panel -->
         <div class="controls">
-            <button id="refreshBtn" aria-label="Refresh stock data">
-                <span aria-hidden="true">🔄</span> Refresh Data
+            <button id="refreshBtn" aria-label="Refresh all data">
+                Refresh Data
             </button>
             <button id="exportBtn" class="export-btn" aria-label="Export data to CSV">
-                <span aria-hidden="true">📊</span> Export to CSV
+                Export to CSV
             </button>
         </div>
 
-        <!-- Dashboard Content -->
-        <div class="dashboard-card">
-            <div id="content">
-                <!-- Loading/Error/Data will be inserted here -->
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Stocks Card -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h2 class="card-title">Stock Performance</h2>
+                    <span class="card-badge badge-stocks">18 Companies</span>
+                </div>
+                <div id="stocksContent">
+                    <!-- Stocks data will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Economic Indicators Card -->
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h2 class="card-title">Economic Indicators</h2>
+                    <span class="card-badge badge-economic">Market Indices</span>
+                </div>
+                <div id="economicContent">
+                    <!-- Economic data will be inserted here -->
+                </div>
             </div>
         </div>
 
@@ -437,67 +509,63 @@
          * ============================================
          */
 
-        // API endpoint
-        const API_ENDPOINT = '/api/stocks';
+        // API endpoints
+        const STOCKS_API = '/api/stocks';
+        const ECONOMIC_API = '/api/economic';
 
         // DOM element references
-        const contentDiv = document.getElementById('content');
+        const stocksContent = document.getElementById('stocksContent');
+        const economicContent = document.getElementById('economicContent');
         const footerDiv = document.getElementById('footer');
         const refreshBtn = document.getElementById('refreshBtn');
         const exportBtn = document.getElementById('exportBtn');
 
-        // Store the latest stock data
+        // Store the latest data
         let currentStockData = null;
+        let currentEconomicData = null;
 
         /**
-         * Displays loading state
+         * Displays loading state in a container
          */
-        function showLoading() {
-            contentDiv.innerHTML = `
+        function showLoading(container, message = 'Fetching latest data...') {
+            container.innerHTML = `
                 <div class="status-message loading" role="status" aria-live="polite">
-                    <p>🔄 Fetching latest data...</p>
-                    <p style="font-size: 0.875rem; margin-top: 0.5rem;">Retrieving real-time stock prices</p>
+                    <p>${message}</p>
                 </div>
             `;
-
-            // Disable buttons during loading
-            refreshBtn.disabled = true;
-            exportBtn.disabled = true;
         }
 
         /**
          * Displays error state
-         * @param {string} message - Error message to display
          */
-        function showError(message) {
-            contentDiv.innerHTML = `
+        function showError(container, message) {
+            container.innerHTML = `
                 <div class="status-message error" role="alert" aria-live="assertive">
-                    <p>❌ Unable to load data. Please try again.</p>
+                    <p>❌ Unable to load data</p>
                     <p style="font-size: 0.875rem; margin-top: 0.5rem;">${message}</p>
                 </div>
             `;
-
-            // Re-enable refresh button
-            refreshBtn.disabled = false;
-            exportBtn.disabled = true;
         }
 
         /**
          * Formats price with $ symbol and 2 decimal places
-         * @param {number} price - Raw price value
-         * @returns {string} Formatted price string
          */
         function formatPrice(price) {
-            if (price === null || price === undefined) {
-                return 'N/A';
-            }
+            if (price === null || price === undefined) return 'N/A';
             return `$${price.toFixed(2)}`;
         }
 
         /**
+         * Formats percentage with sign and 2 decimal places
+         */
+        function formatPercent(percent) {
+            if (percent === null || percent === undefined) return 'N/A';
+            const sign = percent >= 0 ? '+' : '';
+            return `${sign}${percent.toFixed(2)}%`;
+        }
+
+        /**
          * Formats timestamp to readable date/time
-         * @param {string} timestamp - ISO timestamp string
-         * @returns {string} Formatted date/time string
          */
         function formatTimestamp(timestamp) {
             const date = new Date(timestamp);
@@ -513,94 +581,62 @@
         }
 
         /**
-         * Finds highest and lowest prices in dataset
-         * @param {Array} data - Stock data array
-         * @returns {Object} Object with highest and lowest prices
+         * Gets CSS class for sector badge
          */
-        function findPriceExtremes(data) {
-            const validPrices = data.filter(stock => stock.price !== null && !stock.error);
-
-            if (validPrices.length === 0) {
-                return { highest: null, lowest: null };
-            }
-
-            let highest = validPrices[0];
-            let lowest = validPrices[0];
-
-            validPrices.forEach(stock => {
-                if (stock.price > highest.price) highest = stock;
-                if (stock.price < lowest.price) lowest = stock;
-            });
-
-            return { highest, lowest };
-        }
-
-        /**
-         * Generates change indicator HTML
-         * @param {Object} stock - Stock data object
-         * @param {Object} extremes - Highest and lowest price data
-         * @returns {string} HTML for change indicator
-         */
-        function getChangeIndicator(stock, extremes) {
-            if (stock.error || stock.price === null) {
-                return '<span class="change-indicator indicator-neutral">—</span>';
-            }
-
-            if (extremes.highest && stock.ticker === extremes.highest.ticker) {
-                return '<span class="change-indicator indicator-high" aria-label="Highest price">▲</span>';
-            }
-
-            if (extremes.lowest && stock.ticker === extremes.lowest.ticker) {
-                return '<span class="change-indicator indicator-low" aria-label="Lowest price">▼</span>';
-            }
-
-            return '<span class="change-indicator indicator-neutral">—</span>';
+        function getSectorClass(sector) {
+            return 'sector-' + sector.toLowerCase().replace(/\s+/g, '-');
         }
 
         /**
          * Renders stock data table
-         * @param {Object} response - API response object
          */
-        function renderData(response) {
-            const { data, timestamp } = response;
-
-            // Store data for export
-            currentStockData = { data, timestamp };
+        function renderStocks(response) {
+            const { data } = response;
+            currentStockData = data;
 
             // Find price extremes
-            const extremes = findPriceExtremes(data);
+            const validPrices = data.filter(stock => stock.price !== null && !stock.error);
+            let highest = null, lowest = null;
 
-            // Generate table HTML
+            if (validPrices.length > 0) {
+                highest = validPrices.reduce((max, stock) => stock.price > max.price ? stock : max);
+                lowest = validPrices.reduce((min, stock) => stock.price < min.price ? stock : min);
+            }
+
             let tableHTML = `
                 <div class="table-container">
-                    <table role="table" aria-label="Stock prices for technology companies">
+                    <table role="table" aria-label="Stock prices">
                         <thead>
                             <tr>
                                 <th scope="col">Company</th>
                                 <th scope="col">Ticker</th>
-                                <th scope="col">Current Price</th>
-                                <th scope="col">Change Indicator</th>
+                                <th scope="col">Sector</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Change</th>
+                                <th scope="col">% Change</th>
                             </tr>
                         </thead>
                         <tbody>
             `;
 
-            // Add rows for each stock
             data.forEach(stock => {
-                const priceClass = extremes.highest && stock.ticker === extremes.highest.ticker
-                    ? 'highest'
-                    : extremes.lowest && stock.ticker === extremes.lowest.ticker
-                    ? 'lowest'
-                    : '';
+                const priceClass = highest && stock.ticker === highest.ticker ? 'highest'
+                    : lowest && stock.ticker === lowest.ticker ? 'lowest' : '';
+
+                const changeClass = stock.change > 0 ? 'change-positive' : stock.change < 0 ? 'change-negative' : '';
 
                 const priceText = stock.error ? 'Error' : formatPrice(stock.price);
+                const changeText = stock.error ? '-' : formatPrice(stock.change);
+                const percentText = stock.error ? '-' : formatPercent(stock.changePercent);
 
                 tableHTML += `
                     <tr>
                         <td class="company-name">${stock.companyName}</td>
                         <td><span class="ticker">${stock.ticker}</span></td>
+                        <td><span class="sector-badge ${getSectorClass(stock.sector)}">${stock.sector}</span></td>
                         <td class="price ${priceClass}">${priceText}</td>
-                        <td>${getChangeIndicator(stock, extremes)}</td>
+                        <td class="change ${changeClass}">${changeText}</td>
+                        <td class="change ${changeClass}">${percentText}</td>
                     </tr>
                 `;
             });
@@ -611,69 +647,146 @@
                 </div>
             `;
 
-            contentDiv.innerHTML = tableHTML;
-
-            // Update footer with timestamp
-            footerDiv.innerHTML = `
-                <p>Last updated: <span class="timestamp">${formatTimestamp(timestamp)}</span></p>
-                <p style="margin-top: 0.5rem; font-size: 0.75rem;">
-                    <span style="color: var(--success-color);">▲ Highest</span> |
-                    <span style="color: var(--error-color);">▼ Lowest</span>
-                </p>
-            `;
-
-            // Re-enable buttons
-            refreshBtn.disabled = false;
-            exportBtn.disabled = false;
+            stocksContent.innerHTML = tableHTML;
         }
 
         /**
-         * Fetches stock data from API
+         * Renders economic indicators table
          */
-        async function fetchStockData() {
-            showLoading();
+        function renderEconomic(response) {
+            const { data } = response;
+            currentEconomicData = data;
+
+            let tableHTML = `
+                <div class="table-container">
+                    <table role="table" aria-label="Economic indicators">
+                        <thead>
+                            <tr>
+                                <th scope="col">Indicator</th>
+                                <th scope="col">Symbol</th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Value</th>
+                                <th scope="col">Change</th>
+                                <th scope="col">% Change</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            data.forEach(indicator => {
+                const changeClass = indicator.change > 0 ? 'change-positive' : indicator.change < 0 ? 'change-negative' : '';
+
+                const valueText = indicator.error ? 'Error' : formatPrice(indicator.value);
+                const changeText = indicator.error ? '-' : formatPrice(indicator.change);
+                const percentText = indicator.error ? '-' : formatPercent(indicator.changePercent);
+
+                tableHTML += `
+                    <tr>
+                        <td class="company-name">${indicator.name}</td>
+                        <td><span class="ticker">${indicator.symbol}</span></td>
+                        <td><span class="sector-badge ${getSectorClass(indicator.type)}">${indicator.type}</span></td>
+                        <td class="price">${valueText}</td>
+                        <td class="change ${changeClass}">${changeText}</td>
+                        <td class="change ${changeClass}">${percentText}</td>
+                    </tr>
+                `;
+            });
+
+            tableHTML += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            economicContent.innerHTML = tableHTML;
+        }
+
+        /**
+         * Fetches all data from both APIs
+         */
+        async function fetchAllData() {
+            showLoading(stocksContent, 'Loading stocks...');
+            showLoading(economicContent, 'Loading economic indicators...');
+
+            refreshBtn.disabled = true;
+            exportBtn.disabled = true;
 
             try {
-                const response = await fetch(API_ENDPOINT);
+                // Fetch both APIs in parallel
+                const [stocksResponse, economicResponse] = await Promise.all([
+                    fetch(STOCKS_API).then(r => r.json()),
+                    fetch(ECONOMIC_API).then(r => r.json())
+                ]);
 
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({}));
-                    throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+                // Render stocks
+                if (stocksResponse.success) {
+                    renderStocks(stocksResponse);
+                } else {
+                    showError(stocksContent, stocksResponse.message || 'Failed to fetch stock data');
                 }
 
-                const data = await response.json();
-
-                if (!data.success) {
-                    throw new Error(data.message || 'Failed to fetch stock data');
+                // Render economic indicators
+                if (economicResponse.success) {
+                    renderEconomic(economicResponse);
+                } else {
+                    showError(economicContent, economicResponse.message || 'Failed to fetch economic data');
                 }
 
-                renderData(data);
+                // Update footer with timestamp
+                const timestamp = stocksResponse.timestamp || new Date().toISOString();
+                footerDiv.innerHTML = `
+                    <p>Last updated: <span class="timestamp">${formatTimestamp(timestamp)}</span></p>
+                    <p style="margin-top: 0.5rem; font-size: 0.75rem;">
+                        Tracking 18 companies across 6 sectors | 8 economic indicators
+                    </p>
+                `;
+
+                refreshBtn.disabled = false;
+                exportBtn.disabled = false;
 
             } catch (error) {
-                console.error('Error fetching stock data:', error);
-                showError(error.message);
+                console.error('Error fetching data:', error);
+                showError(stocksContent, error.message);
+                showError(economicContent, error.message);
+                refreshBtn.disabled = false;
             }
         }
 
         /**
-         * Exports current stock data to CSV file
+         * Exports current data to CSV file
          */
         function exportToCSV() {
-            if (!currentStockData) {
+            if (!currentStockData && !currentEconomicData) {
                 alert('No data available to export. Please refresh the data first.');
                 return;
             }
 
-            const { data, timestamp } = currentStockData;
+            let csv = '';
 
-            // Create CSV header
-            let csv = 'Company,Ticker,Current Price,Timestamp\n';
+            // Add stocks section
+            if (currentStockData) {
+                csv += 'STOCK PERFORMANCE\n';
+                csv += 'Company,Ticker,Sector,Price,Change,Change %,Timestamp\n';
+                currentStockData.forEach(stock => {
+                    const price = stock.error ? 'Error' : stock.price;
+                    const change = stock.error ? '-' : stock.change;
+                    const changePercent = stock.error ? '-' : stock.changePercent;
+                    csv += `"${stock.companyName}","${stock.ticker}","${stock.sector}","${price}","${change}","${changePercent}","${stock.timestamp}"\n`;
+                });
+                csv += '\n';
+            }
 
-            // Add data rows
-            data.forEach(stock => {
-                const price = stock.error ? 'Error' : stock.price;
-                csv += `"${stock.companyName}","${stock.ticker}","${price}","${timestamp}"\n`;
-            });
+            // Add economic indicators section
+            if (currentEconomicData) {
+                csv += 'ECONOMIC INDICATORS\n';
+                csv += 'Indicator,Symbol,Type,Value,Change,Change %,Timestamp\n';
+                currentEconomicData.forEach(indicator => {
+                    const value = indicator.error ? 'Error' : indicator.value;
+                    const change = indicator.error ? '-' : indicator.change;
+                    const changePercent = indicator.error ? '-' : indicator.changePercent;
+                    csv += `"${indicator.name}","${indicator.symbol}","${indicator.type}","${value}","${change}","${changePercent}","${indicator.timestamp}"\n`;
+                });
+            }
 
             // Create blob and download
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -688,27 +801,22 @@
             link.click();
             document.body.removeChild(link);
 
-            // Cleanup
             URL.revokeObjectURL(url);
         }
 
         /**
          * ============================================
          * Event Listeners
-         * ============================================
-         */
+         * ============================================ */
 
-        // Refresh button click handler
-        refreshBtn.addEventListener('click', fetchStockData);
-
-        // Export button click handler
+        refreshBtn.addEventListener('click', fetchAllData);
         exportBtn.addEventListener('click', exportToCSV);
 
         // Keyboard shortcut: R for refresh
         document.addEventListener('keydown', (e) => {
             if (e.key === 'r' || e.key === 'R') {
                 if (!refreshBtn.disabled) {
-                    fetchStockData();
+                    fetchAllData();
                 }
             }
         });
@@ -716,11 +824,8 @@
         /**
          * ============================================
          * Initialization
-         * ============================================
-         */
-
-        // Fetch data on page load
-        fetchStockData();
+         * ============================================ */
+        fetchAllData();
     </script>
 </body>
 </html>
