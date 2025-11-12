@@ -20,20 +20,25 @@
         }
 
         :root {
-            /* High-contrast color scheme for WCAG AA compliance */
-            --primary-bg: #0a0e27;
-            --secondary-bg: #151b3d;
-            --accent-bg: #1e2749;
+            /* Sleek Black Theme */
+            --primary-bg: #000000;
+            --secondary-bg: #0a0a0a;
+            --card-bg: #111111;
+            --card-hover: #1a1a1a;
+            --accent-bg: #1c1c1c;
             --text-primary: #ffffff;
-            --text-secondary: #b8c1ec;
-            --border-color: #2d3557;
-            --success-color: #00c853;
-            --error-color: #ff1744;
-            --warning-color: #ffa726;
-            --info-color: #29b6f6;
-            --highlight-bg: #2a3f5f;
-            --button-bg: #2962ff;
-            --button-hover: #1e4fd9;
+            --text-secondary: #a0a0a0;
+            --text-muted: #666666;
+            --border-color: #222222;
+            --border-accent: #333333;
+
+            /* Accent Colors */
+            --accent-primary: #00ff88;
+            --accent-secondary: #0088ff;
+            --success-color: #00ff88;
+            --error-color: #ff3366;
+            --warning-color: #ffaa00;
+            --info-color: #00ccff;
 
             /* Spacing */
             --spacing-xs: 0.5rem;
@@ -43,14 +48,16 @@
             --spacing-xl: 3rem;
 
             /* Border radius */
-            --radius-sm: 4px;
-            --radius-md: 8px;
-            --radius-lg: 12px;
+            --radius-sm: 6px;
+            --radius-md: 10px;
+            --radius-lg: 14px;
+            --radius-xl: 20px;
 
             /* Shadows */
-            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
-            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.4);
-            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.5);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.5);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.6);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.7);
+            --shadow-glow: 0 0 20px rgba(0, 255, 136, 0.15);
 
             /* Typography */
             --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -58,11 +65,11 @@
 
         body {
             font-family: var(--font-family);
-            background: linear-gradient(135deg, var(--primary-bg) 0%, var(--secondary-bg) 100%);
+            background: var(--primary-bg);
             color: var(--text-primary);
             min-height: 100vh;
-            padding: var(--spacing-md);
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
         /* ============================================
@@ -71,6 +78,7 @@
         .container {
             max-width: 1400px;
             margin: 0 auto;
+            padding: 0 var(--spacing-md);
             animation: fadeIn 0.6s ease-in;
         }
 
@@ -90,26 +98,92 @@
            ============================================ */
         header {
             text-align: center;
-            margin-bottom: var(--spacing-xl);
-            padding-bottom: var(--spacing-md);
-            border-bottom: 2px solid var(--border-color);
+            padding: var(--spacing-xl) 0 var(--spacing-lg);
+            border-bottom: 1px solid var(--border-color);
+            background: linear-gradient(180deg, var(--primary-bg) 0%, var(--secondary-bg) 100%);
         }
 
         h1 {
-            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-size: clamp(2rem, 5vw, 3rem);
             font-weight: 700;
-            letter-spacing: -0.5px;
-            margin-bottom: var(--spacing-xs);
-            background: linear-gradient(135deg, #2962ff 0%, #00c853 100%);
+            letter-spacing: -1px;
+            margin-bottom: var(--spacing-sm);
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            text-shadow: 0 0 40px rgba(0, 255, 136, 0.3);
         }
 
         .subtitle {
-            font-size: clamp(0.875rem, 2vw, 1.125rem);
+            font-size: clamp(0.9rem, 2vw, 1.1rem);
             color: var(--text-secondary);
             font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        /* ============================================
+           Tab Navigation
+           ============================================ */
+        .tab-navigation {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-lg) 0;
+            background: var(--secondary-bg);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-button {
+            padding: 0.875rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: transparent;
+            border: 1px solid var(--border-accent);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .tab-button:hover::before {
+            left: 100%;
+        }
+
+        .tab-button:hover {
+            color: var(--text-primary);
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .tab-button.active {
+            color: var(--primary-bg);
+            background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+            border-color: var(--accent-primary);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .tab-button:focus {
+            outline: 2px solid var(--accent-primary);
+            outline-offset: 2px;
         }
 
         /* ============================================
@@ -120,141 +194,83 @@
             flex-wrap: wrap;
             gap: var(--spacing-sm);
             justify-content: center;
-            margin-bottom: var(--spacing-lg);
+            padding: var(--spacing-lg) 0;
         }
 
-        button {
-            padding: 0.75rem 1.5rem;
+        .control-button {
+            padding: 0.875rem 1.75rem;
             font-size: 1rem;
             font-weight: 600;
             color: var(--text-primary);
-            background: var(--button-bg);
-            border: none;
+            background: var(--card-bg);
+            border: 1px solid var(--border-accent);
             border-radius: var(--radius-md);
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow-sm);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             font-family: var(--font-family);
+            position: relative;
+            overflow: hidden;
         }
 
-        button:hover:not(:disabled) {
-            background: var(--button-hover);
-            box-shadow: var(--shadow-md);
+        .control-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .control-button:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        .control-button:hover:not(:disabled) {
+            border-color: var(--accent-primary);
+            box-shadow: var(--shadow-glow);
             transform: translateY(-2px);
         }
 
-        button:active:not(:disabled) {
+        .control-button:active:not(:disabled) {
             transform: translateY(0);
         }
 
-        button:disabled {
+        .control-button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
 
-        button:focus {
-            outline: 3px solid rgba(41, 98, 255, 0.5);
+        .control-button:focus {
+            outline: 2px solid var(--accent-primary);
             outline-offset: 2px;
         }
 
         .export-btn {
-            background: var(--success-color);
+            background: linear-gradient(135deg, var(--accent-primary) 0%, #00cc66 100%);
+            border-color: var(--accent-primary);
+            color: var(--primary-bg);
         }
 
         .export-btn:hover:not(:disabled) {
-            background: #00a844;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.4);
         }
 
         /* ============================================
-           Dashboard Cards
+           Tab Content
            ============================================ */
-        .dashboard-grid {
-            display: grid;
-            gap: var(--spacing-lg);
-            margin-bottom: var(--spacing-lg);
+        .tab-content {
+            display: none;
+            animation: slideIn 0.4s ease-out;
+            padding: var(--spacing-lg) 0;
         }
 
-        .dashboard-card {
-            background: var(--secondary-bg);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-lg);
-            padding: var(--spacing-lg);
-            border: 1px solid var(--border-color);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--spacing-md);
-            padding-bottom: var(--spacing-sm);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .card-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .card-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: var(--radius-sm);
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .badge-stocks {
-            background: rgba(41, 98, 255, 0.2);
-            color: #6c9eff;
-        }
-
-        .badge-economic {
-            background: rgba(255, 167, 38, 0.2);
-            color: #ffb84d;
-        }
-
-        /* ============================================
-           Status Messages
-           ============================================ */
-        .status-message {
-            text-align: center;
-            padding: var(--spacing-lg);
-            border-radius: var(--radius-md);
-            font-size: 1.125rem;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        .loading {
-            color: var(--text-secondary);
-            background: var(--accent-bg);
-        }
-
-        .error {
-            color: var(--error-color);
-            background: rgba(255, 23, 68, 0.1);
-            border: 1px solid var(--error-color);
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        /* ============================================
-           Data Table
-           ============================================ */
-        .table-container {
-            overflow-x: auto;
-            border-radius: var(--radius-md);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            animation: slideIn 0.5s ease-out;
+        .tab-content.active {
+            display: block;
         }
 
         @keyframes slideIn {
@@ -268,28 +284,117 @@
             }
         }
 
+        /* ============================================
+           Dashboard Card
+           ============================================ */
+        .dashboard-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: var(--spacing-lg);
+            border: 1px solid var(--border-color);
+            margin-bottom: var(--spacing-lg);
+            transition: all 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            border-color: var(--border-accent);
+            box-shadow: var(--shadow-lg), var(--shadow-glow);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .card-badge {
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.2) 0%, rgba(0, 136, 255, 0.2) 100%);
+            color: var(--accent-primary);
+            border: 1px solid var(--accent-primary);
+        }
+
+        /* ============================================
+           Status Messages
+           ============================================ */
+        .status-message {
+            text-align: center;
+            padding: var(--spacing-xl);
+            border-radius: var(--radius-md);
+            font-size: 1.125rem;
+            background: var(--accent-bg);
+            border: 1px solid var(--border-color);
+        }
+
+        .loading {
+            color: var(--text-secondary);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .error {
+            color: var(--error-color);
+            background: rgba(255, 51, 102, 0.1);
+            border-color: var(--error-color);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* ============================================
+           Data Table
+           ============================================ */
+        .table-container {
+            overflow-x: auto;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
         thead {
             background: var(--accent-bg);
         }
 
         th {
-            padding: var(--spacing-md);
+            padding: var(--spacing-md) var(--spacing-sm);
             text-align: left;
-            font-weight: 600;
-            font-size: 0.875rem;
+            font-weight: 700;
+            font-size: 0.8rem;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
             color: var(--text-secondary);
-            border-bottom: 2px solid var(--border-color);
+            border-bottom: 2px solid var(--border-accent);
         }
 
         tbody tr {
             border-bottom: 1px solid var(--border-color);
-            transition: background-color 0.2s ease;
+            transition: all 0.2s ease;
         }
 
         tbody tr:hover {
-            background: var(--highlight-bg);
+            background: var(--card-hover);
+            box-shadow: inset 0 0 0 1px var(--border-accent);
         }
 
         tbody tr:last-child {
@@ -297,8 +402,8 @@
         }
 
         td {
-            padding: var(--spacing-md);
-            font-size: 1rem;
+            padding: var(--spacing-md) var(--spacing-sm);
+            font-size: 0.95rem;
         }
 
         /* Company name styling */
@@ -310,38 +415,41 @@
         /* Ticker/Symbol styling */
         .ticker {
             font-family: 'Courier New', monospace;
-            font-weight: 500;
-            color: var(--text-secondary);
-            background: var(--accent-bg);
-            padding: 0.25rem 0.5rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+            background: rgba(0, 255, 136, 0.1);
+            padding: 0.25rem 0.625rem;
             border-radius: var(--radius-sm);
             display: inline-block;
+            border: 1px solid rgba(0, 255, 136, 0.3);
         }
 
         /* Sector/Type badge */
         .sector-badge {
-            font-size: 0.75rem;
-            padding: 0.25rem 0.5rem;
+            font-size: 0.7rem;
+            padding: 0.375rem 0.625rem;
             border-radius: var(--radius-sm);
-            font-weight: 500;
+            font-weight: 600;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid;
         }
 
-        .sector-technology { background: rgba(41, 98, 255, 0.2); color: #6c9eff; }
-        .sector-healthcare { background: rgba(0, 200, 83, 0.2); color: #4caf50; }
-        .sector-finance { background: rgba(255, 193, 7, 0.2); color: #ffb300; }
-        .sector-energy { background: rgba(255, 87, 34, 0.2); color: #ff6f43; }
-        .sector-consumer { background: rgba(156, 39, 176, 0.2); color: #ba68c8; }
-        .sector-industrial { background: rgba(96, 125, 139, 0.2); color: #90a4ae; }
-        .sector-index { background: rgba(33, 150, 243, 0.2); color: #42a5f5; }
-        .sector-volatility { background: rgba(255, 23, 68, 0.2); color: #ff1744; }
-        .sector-bonds { background: rgba(76, 175, 80, 0.2); color: #66bb6a; }
-        .sector-commodities { background: rgba(255, 152, 0, 0.2); color: #ffa726; }
+        .sector-technology { background: rgba(0, 136, 255, 0.15); color: #0088ff; border-color: rgba(0, 136, 255, 0.3); }
+        .sector-healthcare { background: rgba(0, 255, 136, 0.15); color: #00ff88; border-color: rgba(0, 255, 136, 0.3); }
+        .sector-finance { background: rgba(255, 170, 0, 0.15); color: #ffaa00; border-color: rgba(255, 170, 0, 0.3); }
+        .sector-energy { background: rgba(255, 51, 102, 0.15); color: #ff3366; border-color: rgba(255, 51, 102, 0.3); }
+        .sector-consumer { background: rgba(204, 51, 255, 0.15); color: #cc33ff; border-color: rgba(204, 51, 255, 0.3); }
+        .sector-industrial { background: rgba(136, 136, 136, 0.15); color: #888888; border-color: rgba(136, 136, 136, 0.3); }
+        .sector-index { background: rgba(0, 204, 255, 0.15); color: #00ccff; border-color: rgba(0, 204, 255, 0.3); }
+        .sector-volatility { background: rgba(255, 51, 102, 0.15); color: #ff3366; border-color: rgba(255, 51, 102, 0.3); }
+        .sector-bonds { background: rgba(102, 255, 102, 0.15); color: #66ff66; border-color: rgba(102, 255, 102, 0.3); }
+        .sector-commodities { background: rgba(255, 204, 0, 0.15); color: #ffcc00; border-color: rgba(255, 204, 0, 0.3); }
 
         /* Price styling */
         .price {
-            font-weight: 600;
-            font-size: 1.125rem;
+            font-weight: 700;
+            font-size: 1.1rem;
             font-variant-numeric: tabular-nums;
         }
 
@@ -363,19 +471,21 @@
         .highest {
             color: var(--success-color);
             font-weight: 700;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
         }
 
         .lowest {
             color: var(--error-color);
             font-weight: 700;
+            text-shadow: 0 0 10px rgba(255, 51, 102, 0.5);
         }
 
         /* ============================================
            Footer Information
            ============================================ */
         .footer-info {
-            margin-top: var(--spacing-lg);
-            padding-top: var(--spacing-md);
+            margin-top: var(--spacing-xl);
+            padding: var(--spacing-lg) 0;
             border-top: 1px solid var(--border-color);
             text-align: center;
             color: var(--text-secondary);
@@ -384,53 +494,57 @@
 
         .timestamp {
             font-weight: 600;
-            color: var(--text-primary);
+            color: var(--accent-primary);
         }
 
         /* ============================================
            Responsive Design
            ============================================ */
         @media (max-width: 768px) {
-            body {
-                padding: var(--spacing-sm);
+            .container {
+                padding: 0 var(--spacing-sm);
+            }
+
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .tab-navigation {
+                padding: var(--spacing-md) 0;
+                gap: var(--spacing-xs);
+            }
+
+            .tab-button {
+                padding: 0.75rem 1.25rem;
+                font-size: 0.9rem;
             }
 
             .dashboard-card {
-                padding: var(--spacing-sm);
+                padding: var(--spacing-md);
             }
 
             .card-header {
                 flex-direction: column;
-                gap: var(--spacing-xs);
+                gap: var(--spacing-sm);
                 align-items: flex-start;
             }
 
+            .card-title {
+                font-size: 1.5rem;
+            }
+
             th, td {
-                padding: var(--spacing-sm);
-                font-size: 0.875rem;
+                padding: var(--spacing-sm) var(--spacing-xs);
+                font-size: 0.85rem;
             }
 
             .price {
                 font-size: 1rem;
             }
 
-            button {
-                padding: 0.625rem 1.25rem;
-                font-size: 0.875rem;
-            }
-
-            @media (max-width: 480px) {
-                .table-container {
-                    overflow-x: auto;
-                }
-
-                table {
-                    font-size: 0.8rem;
-                }
-
-                th, td {
-                    padding: var(--spacing-xs);
-                }
+            .control-button {
+                padding: 0.75rem 1.25rem;
+                font-size: 0.9rem;
             }
         }
 
@@ -448,8 +562,30 @@
         }
 
         *:focus-visible {
-            outline: 3px solid var(--button-bg);
+            outline: 2px solid var(--accent-primary);
             outline-offset: 2px;
+        }
+
+        /* ============================================
+           Scrollbar Styling
+           ============================================ */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--secondary-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-bg);
+            border-radius: var(--radius-sm);
+            border: 2px solid var(--secondary-bg);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--border-accent);
         }
     </style>
 </head>
@@ -461,34 +597,55 @@
             <p class="subtitle">Multi-Sector Stock Analysis & Economic Indicators</p>
         </header>
 
+        <!-- Tab Navigation -->
+        <nav class="tab-navigation" role="tablist" aria-label="Dashboard sections">
+            <button
+                class="tab-button active"
+                role="tab"
+                aria-selected="true"
+                aria-controls="stocks-tab"
+                data-tab="stocks">
+                Stock Performance
+            </button>
+            <button
+                class="tab-button"
+                role="tab"
+                aria-selected="false"
+                aria-controls="economic-tab"
+                data-tab="economic">
+                Economic Indicators
+            </button>
+        </nav>
+
         <!-- Control Panel -->
         <div class="controls">
-            <button id="refreshBtn" aria-label="Refresh all data">
-                Refresh Data
+            <button id="refreshBtn" class="control-button" aria-label="Refresh all data">
+                🔄 Refresh Data
             </button>
-            <button id="exportBtn" class="export-btn" aria-label="Export data to CSV">
-                Export to CSV
+            <button id="exportBtn" class="control-button export-btn" aria-label="Export data to CSV">
+                📊 Export to CSV
             </button>
         </div>
 
-        <!-- Dashboard Grid -->
-        <div class="dashboard-grid">
-            <!-- Stocks Card -->
+        <!-- Stocks Tab Content -->
+        <div id="stocks-tab" class="tab-content active" role="tabpanel" aria-labelledby="stocks-button">
             <div class="dashboard-card">
                 <div class="card-header">
                     <h2 class="card-title">Stock Performance</h2>
-                    <span class="card-badge badge-stocks">18 Companies</span>
+                    <span class="card-badge">18 Companies</span>
                 </div>
                 <div id="stocksContent">
                     <!-- Stocks data will be inserted here -->
                 </div>
             </div>
+        </div>
 
-            <!-- Economic Indicators Card -->
+        <!-- Economic Indicators Tab Content -->
+        <div id="economic-tab" class="tab-content" role="tabpanel" aria-labelledby="economic-button">
             <div class="dashboard-card">
                 <div class="card-header">
                     <h2 class="card-title">Economic Indicators</h2>
-                    <span class="card-badge badge-economic">Market Indices</span>
+                    <span class="card-badge">Market Indices</span>
                 </div>
                 <div id="economicContent">
                     <!-- Economic data will be inserted here -->
@@ -519,10 +676,37 @@
         const footerDiv = document.getElementById('footer');
         const refreshBtn = document.getElementById('refreshBtn');
         const exportBtn = document.getElementById('exportBtn');
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
 
         // Store the latest data
         let currentStockData = null;
         let currentEconomicData = null;
+
+        /**
+         * Tab switching functionality
+         */
+        function switchTab(tabName) {
+            // Update tab buttons
+            tabButtons.forEach(button => {
+                const isActive = button.dataset.tab === tabName;
+                button.classList.toggle('active', isActive);
+                button.setAttribute('aria-selected', isActive);
+            });
+
+            // Update tab content
+            tabContents.forEach(content => {
+                const isActive = content.id === `${tabName}-tab`;
+                content.classList.toggle('active', isActive);
+            });
+        }
+
+        // Add event listeners to tab buttons
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                switchTab(button.dataset.tab);
+            });
+        });
 
         /**
          * Displays loading state in a container
@@ -736,7 +920,7 @@
                 const timestamp = stocksResponse.timestamp || new Date().toISOString();
                 footerDiv.innerHTML = `
                     <p>Last updated: <span class="timestamp">${formatTimestamp(timestamp)}</span></p>
-                    <p style="margin-top: 0.5rem; font-size: 0.75rem;">
+                    <p style="margin-top: 0.5rem; font-size: 0.75rem; color: var(--text-muted);">
                         Tracking 18 companies across 6 sectors | 8 economic indicators
                     </p>
                 `;
@@ -815,9 +999,15 @@
         // Keyboard shortcut: R for refresh
         document.addEventListener('keydown', (e) => {
             if (e.key === 'r' || e.key === 'R') {
-                if (!refreshBtn.disabled) {
+                if (!refreshBtn.disabled && !e.ctrlKey && !e.metaKey) {
                     fetchAllData();
                 }
+            }
+            // Tab switching with keyboard: 1 for stocks, 2 for economic
+            if (e.key === '1') {
+                switchTab('stocks');
+            } else if (e.key === '2') {
+                switchTab('economic');
             }
         });
 
