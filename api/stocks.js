@@ -8,49 +8,100 @@
  * - API_KEY: Finnhub API token (get free at https://finnhub.io/)
  */
 
-// Company ticker to full name mapping
+// Company ticker to full name mapping organized by sector
 const COMPANIES = {
-  'AAPL': 'Apple Inc.',
-  'MSFT': 'Microsoft Corporation',
-  'GOOGL': 'Alphabet Inc.',
-  'META': 'Meta Platforms Inc.',
-  'AMZN': 'Amazon.com Inc.'
+  // Technology
+  'AAPL': { name: 'Apple Inc.', sector: 'Technology' },
+  'MSFT': { name: 'Microsoft Corporation', sector: 'Technology' },
+  'GOOGL': { name: 'Alphabet Inc.', sector: 'Technology' },
+  'META': { name: 'Meta Platforms Inc.', sector: 'Technology' },
+  'NVDA': { name: 'NVIDIA Corporation', sector: 'Technology' },
+
+  // Healthcare
+  'JNJ': { name: 'Johnson & Johnson', sector: 'Healthcare' },
+  'UNH': { name: 'UnitedHealth Group', sector: 'Healthcare' },
+  'PFE': { name: 'Pfizer Inc.', sector: 'Healthcare' },
+
+  // Finance
+  'JPM': { name: 'JPMorgan Chase & Co.', sector: 'Finance' },
+  'BAC': { name: 'Bank of America Corp.', sector: 'Finance' },
+  'GS': { name: 'Goldman Sachs Group', sector: 'Finance' },
+
+  // Energy
+  'XOM': { name: 'Exxon Mobil Corporation', sector: 'Energy' },
+  'CVX': { name: 'Chevron Corporation', sector: 'Energy' },
+
+  // Consumer/Retail
+  'AMZN': { name: 'Amazon.com Inc.', sector: 'Consumer' },
+  'WMT': { name: 'Walmart Inc.', sector: 'Consumer' },
+  'COST': { name: 'Costco Wholesale', sector: 'Consumer' },
+
+  // Industrial
+  'BA': { name: 'Boeing Company', sector: 'Industrial' },
+  'CAT': { name: 'Caterpillar Inc.', sector: 'Industrial' }
 };
 
 /**
- * Fetches stock price data for a specific ticker using Finnhub API
+ * Fetches stock price data for a specific ticker using Finnhub API with retry logic
  * @param {string} ticker - Stock ticker symbol
  * @param {string} apiKey - Finnhub API token
+ * @param {number} retries - Number of retry attempts (default: 2)
  * @returns {Promise<Object>} Stock data object
  */
-async function fetchStockPrice(ticker, apiKey) {
+async function fetchStockPrice(ticker, apiKey, retries = 2) {
   // Finnhub API endpoint for real-time quote
   const url = `https://finnhub.io/api/v1/quote?symbol=${ticker}&token=${apiKey}`;
 
-  const response = await fetch(url);
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const response = await fetch(url, {
+        headers: {
+          'Accept': 'application/json'
+        },
+        signal: AbortSignal.timeout(5000) // 5 second timeout
+      });
 
-  if (!response.ok) {
-    const errorText = await response.text().catch(() => 'Unknown error');
-    throw new Error(`API request failed for ${ticker}: ${response.status} - ${errorText}`);
+      if (!response.ok) {
+        if (response.status === 429) {
+          // Rate limit hit, wait before retry
+          if (attempt < retries) {
+            await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
+            continue;
+          }
+        }
+        const errorText = await response.text().catch(() => 'Unknown error');
+        throw new Error(`API request failed for ${ticker}: ${response.status} - ${errorText}`);
+      }
+
+      const data = await response.json();
+
+      // Finnhub returns: { c: currentPrice, h: high, l: low, o: open, pc: previousClose, t: timestamp }
+      // Check if we got valid data
+      if (data.c === 0 && data.t === 0) {
+        throw new Error(`No data available for ${ticker} (market may be closed or invalid ticker)`);
+      }
+
+      const companyInfo = COMPANIES[ticker];
+      return {
+        ticker: ticker,
+        companyName: companyInfo.name,
+        sector: companyInfo.sector,
+        price: data.c, // 'c' is the current price
+        previousClose: data.pc, // Previous close price
+        change: data.c - data.pc, // Price change
+        changePercent: ((data.c - data.pc) / data.pc) * 100, // Percentage change
+        high: data.h, // Day high
+        low: data.l, // Day low
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      if (attempt === retries) {
+        throw error;
+      }
+      // Wait before retry (exponential backoff)
+      await new Promise(resolve => setTimeout(resolve, 500 * Math.pow(2, attempt)));
+    }
   }
-
-  const data = await response.json();
-
-  // Finnhub returns: { c: currentPrice, h: high, l: low, o: open, pc: previousClose, t: timestamp }
-  // Check if we got valid data
-  if (data.c === 0 && data.t === 0) {
-    throw new Error(`No data available for ${ticker} (market may be closed or invalid ticker)`);
-  }
-
-  return {
-    ticker: ticker,
-    companyName: COMPANIES[ticker],
-    price: data.c, // 'c' is the current price
-    previousClose: data.pc, // Previous close price
-    change: data.c - data.pc, // Price change
-    changePercent: ((data.c - data.pc) / data.pc) * 100, // Percentage change
-    timestamp: new Date().toISOString()
-  };
 }
 
 /**
@@ -99,9 +150,11 @@ export default async function handler(req, res) {
         .catch(error => {
           console.error(`Error fetching ${ticker}:`, error.message);
           // Return error object for this ticker instead of failing completely
+          const companyInfo = COMPANIES[ticker];
           return {
             ticker: ticker,
-            companyName: COMPANIES[ticker],
+            companyName: companyInfo.name,
+            sector: companyInfo.sector,
             price: null,
             error: error.message,
             timestamp: timestamp

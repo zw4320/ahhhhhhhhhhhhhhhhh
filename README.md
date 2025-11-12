@@ -1,6 +1,6 @@
 # Competitive Intelligence Dashboard
 
-A professional business intelligence dashboard for tracking real-time stock performance of major technology companies. Built for deployment on Vercel with a serverless architecture.
+A professional business intelligence dashboard for tracking real-time stock performance across multiple sectors and key economic indicators. Built for deployment on Vercel with a robust serverless architecture.
 
 ![Dashboard Preview](https://img.shields.io/badge/Status-Production%20Ready-success)
 ![Vercel Compatible](https://img.shields.io/badge/Vercel-Compatible-black)
@@ -9,18 +9,31 @@ A professional business intelligence dashboard for tracking real-time stock perf
 ## 🎯 Features
 
 ### Business Intelligence
-- **Real-time Stock Tracking**: Monitor current prices for Apple, Microsoft, Google, Meta, and Amazon
-- **Visual Indicators**: Highest prices highlighted in green, lowest in red
-- **Data Export**: Download stock data as CSV for reports and presentations
-- **Timestamp Tracking**: Know exactly when data was last updated
+- **Multi-Sector Stock Tracking**: Monitor 18 companies across 6 major sectors
+  - Technology: AAPL, MSFT, GOOGL, META, NVDA
+  - Healthcare: JNJ, UNH, PFE
+  - Finance: JPM, BAC, GS
+  - Energy: XOM, CVX
+  - Consumer: AMZN, WMT, COST
+  - Industrial: BA, CAT
+- **Economic Indicators**: Track 8 key market indicators
+  - Market Indices: S&P 500, Dow Jones, NASDAQ, Russell 2000
+  - Volatility: VIX (Fear Index)
+  - Bonds: 10-Year Treasury Yield
+  - Commodities: Gold, Crude Oil
+- **Visual Indicators**: Color-coded sectors, price changes, and extremes
+- **Data Export**: Download comprehensive CSV reports for presentations
+- **Real-time Updates**: Live data during market hours, last close when markets closed
 
 ### Technical Excellence
-- **Serverless Architecture**: Efficient API calls through Vercel serverless functions
+- **Robust API Architecture**: Retry logic, exponential backoff, and timeout handling
+- **Dual API Endpoints**: Separate endpoints for stocks and economic data
 - **High-Contrast Design**: WCAG AA compliant for accessibility
 - **Responsive Layout**: Optimized for desktop, tablet, and mobile devices
-- **Error Handling**: Comprehensive error states and user feedback
+- **Comprehensive Error Handling**: Graceful degradation and detailed error messages
 - **Loading States**: Smooth animations and clear loading indicators
 - **Security Headers**: Protected with modern security best practices
+- **Parallel Data Fetching**: Optimized performance with concurrent API calls
 
 ## 🚀 Quick Start
 
@@ -72,34 +85,56 @@ A professional business intelligence dashboard for tracking real-time stock perf
 ```
 .
 ├── api/
-│   └── stocks.js          # Serverless function for stock data
-├── index.html             # Dashboard frontend
+│   ├── stocks.js          # Serverless function for stock data (18 companies)
+│   └── economic.js        # Serverless function for economic indicators
+├── index.html             # Dashboard frontend with dual sections
 ├── vercel.json            # Vercel configuration
 ├── .env.example           # Environment variable template
+├── .gitignore             # Git ignore rules
 └── README.md              # This file
 ```
 
 ## 🔧 Configuration
 
-### Tracked Companies
+### Tracked Assets
 
-The dashboard currently tracks these companies (configurable in `api/stocks.js`):
+The dashboard tracks 18 companies across 6 sectors and 8 economic indicators:
 
-| Company | Ticker |
-|---------|--------|
-| Apple Inc. | AAPL |
-| Microsoft Corporation | MSFT |
-| Alphabet Inc. | GOOGL |
-| Meta Platforms Inc. | META |
-| Amazon.com Inc. | AMZN |
+**Stocks (api/stocks.js):**
 
-To add or modify tracked companies, edit the `COMPANIES` object in `api/stocks.js`:
+| Sector | Companies | Tickers |
+|--------|-----------|---------|
+| Technology | Apple, Microsoft, Alphabet, Meta, NVIDIA | AAPL, MSFT, GOOGL, META, NVDA |
+| Healthcare | Johnson & Johnson, UnitedHealth, Pfizer | JNJ, UNH, PFE |
+| Finance | JPMorgan, Bank of America, Goldman Sachs | JPM, BAC, GS |
+| Energy | Exxon Mobil, Chevron | XOM, CVX |
+| Consumer | Amazon, Walmart, Costco | AMZN, WMT, COST |
+| Industrial | Boeing, Caterpillar | BA, CAT |
 
+**Economic Indicators (api/economic.js):**
+
+| Type | Indicators | Symbols |
+|------|------------|---------|
+| Market Indices | S&P 500, Dow Jones, NASDAQ, Russell 2000 | ^GSPC, ^DJI, ^IXIC, ^RUT |
+| Volatility | VIX (Fear Index) | ^VIX |
+| Bonds | 10-Year Treasury Yield | ^TNX |
+| Commodities | Gold Futures, Crude Oil WTI | GC=F, CL=F |
+
+**To add or modify tracked assets:**
+
+Edit the `COMPANIES` object in `api/stocks.js`:
 ```javascript
 const COMPANIES = {
-  'AAPL': 'Apple Inc.',
-  'MSFT': 'Microsoft Corporation',
-  // Add more companies here
+  'TSLA': { name: 'Tesla Inc.', sector: 'Technology' },
+  // Add more companies
+};
+```
+
+Edit the `INDICATORS` object in `api/economic.js`:
+```javascript
+const INDICATORS = {
+  '^IXIC': { name: 'NASDAQ Composite', type: 'Index', description: 'Tech Index' },
+  // Add more indicators
 };
 ```
 
@@ -201,18 +236,23 @@ Perfect for:
 ## 📈 Performance
 
 - **Page Load**: < 1 second
-- **API Response**: 2-5 seconds (parallel requests)
-- **Data Size**: ~2 KB per response
+- **API Response**: 3-6 seconds (parallel requests for 26 assets)
+- **Data Size**: ~5 KB total (stocks + economic indicators)
+- **API Efficiency**: Retry logic with exponential backoff
+- **Rate Limiting**: Respects Finnhub free tier (60 calls/minute)
 - **Lighthouse Score**: 95+ (Performance, Accessibility, Best Practices)
+- **Concurrent Requests**: Fetches both endpoints simultaneously
 
 ## 🤝 Contributing
 
 This is a production-ready template. Feel free to:
-- Add more companies to track
-- Implement additional data visualizations
-- Add historical price tracking
-- Create comparison charts
+- Add more companies across different sectors
+- Add more economic indicators (GDP, unemployment, etc.)
+- Implement historical price tracking and charts
+- Create sector performance comparisons
+- Add filtering and sorting capabilities
 - Integrate additional data sources
+- Build notification systems for price alerts
 
 ## 📄 License
 
